@@ -1,0 +1,25 @@
+.slider {
+    height: 100%;
+    text-align: center
+}
+.scroll {
+    height: 100%
+}
+.cat01{
+    background-color: red;
+}
+.cat02{
+    background-color: blue;
+}
+.cat03{
+    background-color: cyan;
+}
+.cat04{
+    background-color: darkgreen;
+}
+.cat05{
+    background-color: darkviolet;
+}
+.cat06{
+    background-color: yellow;
+}
