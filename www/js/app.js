@@ -66,14 +66,38 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
               }
             },
             resolve: {
-              cat: function(Cats,$stateParams){
-                res = Cats.get($stateParams.catId);
+              cat: function($stateParams){
+                res = $stateParams.get(catId);
+                return res;
+              },
+              cols: function(Cats,$stateParams){
+                res = Cats.getCols($stateParams.catId);
                 return res;
               }
             }
           })
-          .state('tab.cat-detail.comics',{
-
+          .state('tab.cat-detail.comic',{
+            url: '/cat/:catId/:colId',
+            views:{
+              'tab-cats':{
+                templateUrl: 'templates/cat-detail-comics.html',
+                controller: 'CatDetailComicsCtrl'
+              }
+            },
+            resolve: {
+              cat: function($stateParams){
+                res = $stateParams.catId;
+                return res;
+              },
+              col: function($stateParams){
+                res = $stateParams.colId;
+                return res;
+              },
+              comics: function(Cats,$stateParams){
+                res = Cats.getComics($stateParams.catId,$stateParams.colId);
+                return res;
+              }
+            }
           })
           .state('tab.account', {
             url: '/account',
