@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
+angular.module('starter', ['ionic', 'controllers', 'services'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -22,7 +22,8 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 })
 
 .config(function($stateProvider, $urlRouterProvider,$compileProvider) {
-      $compileProvider.imgSrcSanitizationWhitelist('img/');
+      $compileProvider.imgSrcSanitizationWhitelist('.*');
+      //$compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|file|blob):|data:image\//);
       // Ionic uses AngularUI Router which uses the concept of states
       // Learn more here: https://github.com/angular-ui/ui-router
       // Set up the various states which the app can be in.
@@ -66,8 +67,8 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
               }
             },
             resolve: {
-              cat: function($stateParams){
-                res = $stateParams.get(catId);
+              cat: function(Cats,$stateParams){
+                res = Cats.get($stateParams.catId);
                 return res;
               },
               cols: function(Cats,$stateParams){
@@ -76,25 +77,48 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
               }
             }
           })
-          .state('tab.cat-detail.comic',{
-            url: '/cat/:catId/:colId',
+          .state('tab.comics',{
+            url: '/comics/:catId/:colId',
             views:{
               'tab-cats':{
-                templateUrl: 'templates/cat-detail-comics.html',
+                templateUrl: 'templates/cat-comics.html',
                 controller: 'CatDetailComicsCtrl'
               }
             },
             resolve: {
-              cat: function($stateParams){
-                res = $stateParams.catId;
-                return res;
-              },
-              col: function($stateParams){
-                res = $stateParams.colId;
-                return res;
-              },
               comics: function(Cats,$stateParams){
-                res = Cats.getComics($stateParams.catId,$stateParams.colId);
+                res = Cats.getComics($stateParams.colId);
+                return res;
+              },
+              cat: function(Cats,$stateParams){
+                res = Cats.get($stateParams.catId);
+                return res;
+              },
+              col: function(Cats,$stateParams){
+                res = Cats.getCol($stateParams.colId);
+                return res;
+              }
+            }
+          })
+          .state('tab.comic',{
+            url: '/comic/:catId/:colId/:comicId',
+            views:{
+              'tab-cats':{
+                templateUrl: 'templates/cat-comic.html',
+                controller: 'CatDetailComicCtrl'
+              }
+            },
+            resolve: {
+              comic: function(Cats,$stateParams){
+                res = Cats.getComic($stateParams.comicId);
+                return res;
+              },
+              cat: function(Cats,$stateParams){
+                res = Cats.get($stateParams.catId);
+                return res;
+              },
+              col: function(Cats,$stateParams){
+                res = Cats.getCol($stateParams.colId);
                 return res;
               }
             }

@@ -20,20 +20,17 @@
       </div>
     </div>
     <div class="list list-inset">
-      <a class="item item-avatar">
-        <img src="img/cats/avatar01.png">
-        <h2>Test Infinite Crisis</h2>
-        <p>Crisis de mundos infinitos</p>
-      </a>
-      <a class="item item-avatar">
-        <img src="img/cats/avatar01.png">
-        <h2>Test Infinite Crisis</h2>
-        <p>Crisis de mundos infinitos</p>
-      </a>
-      <a class="item item-avatar">
-        <img src="img/cats/avatar01.png">
-        <h2>Test Infinite Crisis</h2>
-        <p>Crisis de mundos infinitos</p>
+      <a class="item item-thumbnail"
+         ng-repeat="col in cols"
+              ui-sref='tab.comics({catId:cat._id,colId:col._id})'>
+        <div class="row">
+        <div class="col-20"><img src='{{col.cover}}'></div>
+        <div class="col">
+          <h2>{{col.name}}</h2>
+          <p>{{col.numeros}} números</p>
+          <p>publicado el {{col.published}}</p>
+        </div>
+        </div>
       </a>
     </div>
   </ion-content>

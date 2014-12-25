@@ -1,0 +1,25 @@
+<!--
+  This template loads for the 'tab.friend-detail' state (app.js)
+  'friend' is a $scope variable created in the FriendsCtrl controller (controllers.js)
+  The FriendsCtrl pulls data from the Friends service (service.js)
+  The Friends service returns an array of friend data
+-->
+<ion-view title="{{col.name}}">
+  <ion-content has-header="true" padding="true">
+    <div class="item item-avatar">
+      <img src="{{cat.avatar}}">
+      <h2>{{col.name}}</h2>
+      <p>{{comic.numero}} de {{col.numeros}}</p>
+    </div>
+    <div class="item item-image">
+      <img style="width:80%" src="{{comic.cover}}">
+    </div>
+    <a class="item item-icon-left assertive">
+      <i class="icon ion-android-drawer"></i>
+      <p><b>Desc:</b> {{comic.descripcion}}</p>
+      <p><b>Notas:</b> {{comic.notas}}</p>
+      <p><b>Publicado:</b> {{comic.published}}</p>
+      <p><b>Precio:</b> {{comic.precio}}</p>
+    </a>
+  </ion-content>
+</ion-view>

@@ -1,9 +1,8 @@
-angular.module('starter.controllers', [])
-
-.controller('DashCtrl', function($scope) {
-})
-
-.controller('CatsCtrl', function($scope,$ionicSlideBoxDelegate, cats) {
+angular.module('controllers', [])
+    .controller('DashCtrl', function($scope,Cats) {
+        Cats.data();
+    })
+    .controller('CatsCtrl', function($scope,$ionicSlideBoxDelegate, cats) {
         $scope.cats = cats;
         $scope.navSlide = function(index){
             $ionicSlideBoxDelegate.slide(index,500);
@@ -12,10 +11,23 @@ angular.module('starter.controllers', [])
         $scope.navChanged = function(index){
 
         }
-})
-.controller('CatDetailCtrl', function($scope, $stateParams, cat) {
-  $scope.cat = cat;
-})
+    })
+    .controller('CatDetailCtrl', function($scope,cat,cols) {
+        $scope.cat = cat;
+        $scope.cols=cols;
+    })
+    .controller('CatDetailComicsCtrl',function($scope,cat,col,comics){
+        $scope.cat= cat;
+        $scope.col = col;
+        $scope.comics = comics;
 
-.controller('AccountCtrl', function($scope) {
-});
+    })
+    .controller('CatDetailComicCtrl',function($scope,cat,col,comic){
+        $scope.cat= cat;
+        $scope.col = col;
+        $scope.comic = comic;
+
+    })
+    .controller('AccountCtrl', function($scope) {
+
+    });
