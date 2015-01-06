@@ -23,6 +23,7 @@ angular.module('starter', ['ionic', 'controllers', 'services'])
 
 .config(function($stateProvider, $urlRouterProvider,$compileProvider) {
       $compileProvider.imgSrcSanitizationWhitelist('.*');
+      //$compileProvider.imgSrcSanitizationWhitelist('img/*');
       //$compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|file|blob):|data:image\//);
       // Ionic uses AngularUI Router which uses the concept of states
       // Learn more here: https://github.com/angular-ui/ui-router
@@ -53,7 +54,7 @@ angular.module('starter', ['ionic', 'controllers', 'services'])
             },
             resolve: {
               cats: function(Cats){
-                res = Cats.all();
+                res = Cats.getCatalogos();
                 return res;
               }
             }
@@ -68,11 +69,11 @@ angular.module('starter', ['ionic', 'controllers', 'services'])
             },
             resolve: {
               cat: function(Cats,$stateParams){
-                res = Cats.get($stateParams.catId);
+                res = Cats.getDB($stateParams.catId);
                 return res;
               },
               cols: function(Cats,$stateParams){
-                res = Cats.getCols($stateParams.catId);
+                res = Cats.getColecciones($stateParams.catId);
                 return res;
               }
             }
@@ -87,15 +88,15 @@ angular.module('starter', ['ionic', 'controllers', 'services'])
             },
             resolve: {
               comics: function(Cats,$stateParams){
-                res = Cats.getComics($stateParams.colId);
+                res = Cats.getComs($stateParams.colId);
                 return res;
               },
               cat: function(Cats,$stateParams){
-                res = Cats.get($stateParams.catId);
+                res = Cats.getDB($stateParams.catId);
                 return res;
               },
               col: function(Cats,$stateParams){
-                res = Cats.getCol($stateParams.colId);
+                res = Cats.getDB($stateParams.colId);
                 return res;
               }
             }
@@ -110,15 +111,15 @@ angular.module('starter', ['ionic', 'controllers', 'services'])
             },
             resolve: {
               comic: function(Cats,$stateParams){
-                res = Cats.getComic($stateParams.comicId);
+                res = Cats.getDB($stateParams.comicId);
                 return res;
               },
               cat: function(Cats,$stateParams){
-                res = Cats.get($stateParams.catId);
+                res = Cats.getDB($stateParams.catId);
                 return res;
               },
               col: function(Cats,$stateParams){
-                res = Cats.getCol($stateParams.colId);
+                res = Cats.getDB($stateParams.colId);
                 return res;
               }
             }

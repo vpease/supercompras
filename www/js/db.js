@@ -1,23 +1,42 @@
 /**
  * Created by vpease on 20/12/2014.
  */
-angular.module('db',['pouchdb'])
+angular.module('db',[])
 
-.factory('DB',function($q,pouchDB) {
+.factory('DB',function($q) {
         var self = this;
         self.db;
         self.init = function() {
             if (!self.db) {
                 console.log('database is closed');
-                self.db = pouchDB('supercomics',{adapter: 'websql'});
+                self.db = new PouchDB('supercomics',{adapter: 'websql'});
+                self.db.compact();
                 //self.db = pouchDB('supercomics',{adapter: 'idb'});
-                console.log('ya se grabó')
+                console.log('ya se grabó');
+                var sync = PouchDB.sync('supercomics','http://vpease.couchappy.com/supercomics',{live:true})
+                    .on('change',function(info){
+                        console.log('Cambios en la base de datos'+info);
+                    }).on('complete',function(info){
+                        console.log('Sync complete'+info);
+                        alert('Sync complete: '+info);
+                    }).on('uptodate',function(info){
+                        console.log('Actualizado'+info);
+                    }).on('error',function(err){
+                        console.log('Error: '+err);
+                    })
             }
         };
-        self.gql = function(gql){
-            if (!self.db){
-                self.init();
-            }
+        self.gql = function(consulta){
+            self.db.gql(consulta,function(err,result){
+                if(!err){
+                    console.log('Error: '+err);
+                }
+                console.log('Resultados: '+result);
+                return result;
+            })
+        };
+        self.getView = function(view,options){
+            return self.db.query(view,options);
         };
         self.remove = function (key){
           self.db.remove(key,function(err,response){
@@ -29,13 +48,7 @@ angular.module('db',['pouchdb'])
           });
         };
         self.get = function(key){
-            self.db.get(object._id,function(err,doc){
-                if (!err){
-                    return doc;
-                } else {
-                    return null;
-                }
-            });
+            return self.db.get(key);
         };
         self.put = function(object){
             if (!self.db){
@@ -71,7 +84,6 @@ angular.module('db',['pouchdb'])
                 }
             });
         };
-
         self.bulk = function(objects){
             if (!self.db){
                 self.init();

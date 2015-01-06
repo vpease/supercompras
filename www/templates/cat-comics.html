@@ -25,11 +25,11 @@
     <div class="list list-inset">
       <a class="item item-thumbnail-left"
          ng-repeat="comic in comics"
-         ui-sref='tab.comic({catId:cat._id,colId:col._id,comicId:comic._id})'>
-        <img src='{{comic.cover}}'>
-        <h2>Número: {{comic.numero}} de {{col.numeros}}</h2>
-        <p>Publicado: {{comic.published}}</p>
-        <p>Precio: {{comic.precio}}</p>
+         ui-sref='tab.comic({catId:cat._id,colId:col._id,comicId:comic.id})'>
+        <img src='{{comic.doc.cover}}'>
+        <h2>Número: {{comic.doc.numero}} de {{col.numeros}}</h2>
+        <p>Publicado: {{comic.doc.published}}</p>
+        <p>Precio: {{comic.doc.precio}}</p>
       </a>
     </div>
   </ion-content>
