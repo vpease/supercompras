@@ -20,7 +20,12 @@ angular.module('starter', ['ionic', 'controllers', 'services'])
     }
   });
 })
-
+    .run(function($rootScope,$location){
+      $rootScope.$on('db:uptodate',function(){
+        $location.path('/tab/dash');
+        $rootScope.$apply();
+      });
+    })
 .config(function($stateProvider, $urlRouterProvider,$compileProvider) {
       $compileProvider.imgSrcSanitizationWhitelist('.*');
       //$compileProvider.imgSrcSanitizationWhitelist('img/*');
@@ -30,6 +35,11 @@ angular.module('starter', ['ionic', 'controllers', 'services'])
       // Set up the various states which the app can be in.
       // Each state's controller can be found in controllers.js
       $stateProvider
+          .state('login',{
+            url: "/login",
+            templateUrl: "templates/login.html",
+            controller: "LoginCtrl"
+          })
           .state('tab', {
             url: "/tab",
             abstract: true,
@@ -134,6 +144,7 @@ angular.module('starter', ['ionic', 'controllers', 'services'])
             }
           });
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/tab/dash');
+  //$urlRouterProvider.otherwise('/tab/dash');
+      $urlRouterProvider.otherwise('/login');
 });
 

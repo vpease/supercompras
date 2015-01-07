@@ -3,7 +3,7 @@
  */
 angular.module('db',[])
 
-.factory('DB',function($q) {
+.factory('DB',function($q,$rootScope) {
         var self = this;
         self.db;
         self.init = function() {
@@ -13,14 +13,17 @@ angular.module('db',[])
                 self.db.compact();
                 //self.db = pouchDB('supercomics',{adapter: 'idb'});
                 console.log('ya se grabó');
-                var sync = PouchDB.sync('supercomics','http://vpease.couchappy.com/supercomics',{live:true})
+                var sync = self.db.replicate.from(
+                    'http://vpease.couchappy.com/supercomics',
+                    {live:true})
                     .on('change',function(info){
                         console.log('Cambios en la base de datos'+info);
                     }).on('complete',function(info){
                         console.log('Sync complete'+info);
-                        alert('Sync complete: '+info);
+
                     }).on('uptodate',function(info){
                         console.log('Actualizado'+info);
+                        $rootScope.$broadcast('db:uptodate');
                     }).on('error',function(err){
                         console.log('Error: '+err);
                     })

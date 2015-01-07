@@ -1,6 +1,9 @@
 angular.module('controllers', [])
-    .controller('DashCtrl', function($scope,Cats) {
+    .controller('LoginCtrl',function($scope,Cats){
         Cats.data();
+    })
+    .controller('DashCtrl', function($scope,Cats) {
+        //Cats.data();
     })
     .controller('CatsCtrl', function($scope,$ionicSlideBoxDelegate, cats) {
         $scope.cats = cats.rows;
