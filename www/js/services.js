@@ -230,7 +230,7 @@ angular.module('services', ['db'])
     },
     getComs: function(colid){
       var dfd = $q.defer();
-      DB.getView('comics/comics',{key:colid,include_docs:true})
+      DB.getView('comics/comics',{startkey:[colid],endkey:[colid,{}],include_docs:true})
           .then(function(result){
             console.log('Recuperando comics');
             dfd.resolve(result);

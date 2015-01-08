@@ -29,15 +29,6 @@ angular.module('db',[])
                     })
             }
         };
-        self.gql = function(consulta){
-            self.db.gql(consulta,function(err,result){
-                if(!err){
-                    console.log('Error: '+err);
-                }
-                console.log('Resultados: '+result);
-                return result;
-            })
-        };
         self.getView = function(view,options){
             return self.db.query(view,options);
         };
