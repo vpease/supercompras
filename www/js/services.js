@@ -212,7 +212,7 @@ angular.module('services', ['db'])
     },
     getCatalogos: function(){
       var dfd = $q.defer();
-      DB.getView('comics/catalogos',{include_docs:true})
+      DB.getAll({startkey: 'cat',endkey:'cat\uffff',include_docs:true})
           .then(function(result){
             console.log('Recuperando catálogos');
             dfd.resolve(result);
@@ -230,7 +230,9 @@ angular.module('services', ['db'])
     },
     getComs: function(colid){
       var dfd = $q.defer();
-      DB.getView('comics/comics',{startkey:[colid],endkey:[colid,{}],include_docs:true})
+      stkey ='com_'+colid;
+      enkey = stkey+'\uffff';
+      DB.getAll({startkey:stkey,endkey:enkey,include_docs:true})
           .then(function(result){
             console.log('Recuperando comics');
             dfd.resolve(result);

@@ -38,12 +38,24 @@ angular.module('starter', ['ionic', 'controllers', 'services'])
           .state('login',{
             url: "/login",
             templateUrl: "templates/login.html",
-            controller: "LoginCtrl"
+            controller: "LoginCtrl",
+            onEnter: function(){
+              console.log('Estoy en el estado login');
+            },
+            onExit: function(){
+              console.log('Saliendo del estado login')
+            }
           })
           .state('tab', {
             url: "/tab",
             abstract: true,
-            templateUrl: "templates/tabs.html"
+            templateUrl: "templates/tabs.html",
+            onEnter: function(){
+              console.log('Estoy en el estado tab');
+            },
+            onExit: function(){
+              console.log('Saliendo del estado tab')
+            }
           })
           .state('tab.dash', {
             url: '/dash',
@@ -52,6 +64,12 @@ angular.module('starter', ['ionic', 'controllers', 'services'])
                 templateUrl: 'templates/tab-dash.html',
                 controller: 'DashCtrl'
               }
+            },
+            onEnter: function(){
+              console.log('Estoy en el estado tab.dash');
+            },
+            onExit: function(){
+              console.log('Saliendo del estado tab.dash')
             }
           })
           .state('tab.cats', {
@@ -67,6 +85,12 @@ angular.module('starter', ['ionic', 'controllers', 'services'])
                 res = Cats.getCatalogos();
                 return res;
               }
+            },
+            onEnter: function(){
+              console.log('Estoy en el estado tab.cats');
+            },
+            onExit: function(){
+              console.log('Saliendo del estado tab.cats')
             }
           })
           .state('tab.cat-detail', {
@@ -86,6 +110,12 @@ angular.module('starter', ['ionic', 'controllers', 'services'])
                 res = Cats.getColecciones($stateParams.catId);
                 return res;
               }
+            },
+            onEnter: function(){
+              console.log('Estoy en el estado tab.cat-detail');
+            },
+            onExit: function(){
+              console.log('Saliendo del estado tab.cat-detail')
             }
           })
           .state('tab.comics',{
@@ -109,6 +139,12 @@ angular.module('starter', ['ionic', 'controllers', 'services'])
                 res = Cats.getDB($stateParams.colId);
                 return res;
               }
+            },
+            onEnter: function(){
+              console.log('Estoy en el estado tab.comics');
+            },
+            onExit: function(){
+              console.log('Saliendo del estado tab.comics')
             }
           })
           .state('tab.comic',{
@@ -132,6 +168,27 @@ angular.module('starter', ['ionic', 'controllers', 'services'])
                 res = Cats.getDB($stateParams.colId);
                 return res;
               }
+            },
+            onEnter: function(){
+              console.log('Estoy en el estado tab.comic');
+            },
+            onExit: function(){
+              console.log('Saliendo del estado tab.comic')
+            }
+          })
+          .state('tab.buscar', {
+            url: '/buscar',
+            views: {
+              'tab-buscar': {
+                templateUrl: 'templates/tab-buscar.html',
+                controller: 'BuscarCtrl'
+              }
+            },
+            onEnter: function(){
+              console.log('Estoy en el estado tab.buscar');
+            },
+            onExit: function(){
+              console.log('Saliendo del estado tab.buscar')
             }
           })
           .state('tab.account', {
@@ -141,6 +198,12 @@ angular.module('starter', ['ionic', 'controllers', 'services'])
                 templateUrl: 'templates/tab-account.html',
                 controller: 'AccountCtrl'
               }
+            },
+            onEnter: function(){
+              console.log('Estoy en el estado tab.account');
+            },
+            onExit: function(){
+              console.log('Saliendo del estado tab.account')
             }
           });
   // if none of the above states are matched, use this as the fallback

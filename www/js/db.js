@@ -10,7 +10,11 @@ angular.module('db',[])
             if (!self.db) {
                 console.log('database is closed');
                 self.db = new PouchDB('supercomics',{adapter: 'websql',auto_compaction:true});
-                self.db.compact();
+                self.db.compact().then(function(info){
+                    console.log('DB compactada');
+                }).catch(function(err){
+                    console.log('Error mientras compactando');
+                });
                 //self.db = pouchDB('supercomics',{adapter: 'idb'});
                 console.log('ya se grabó');
                 var sync = self.db.replicate.from(
@@ -31,6 +35,9 @@ angular.module('db',[])
         };
         self.getView = function(view,options){
             return self.db.query(view,options);
+        };
+        self.getAll = function(query){
+          return self.db.allDocs(query);
         };
         self.remove = function (key){
           self.db.remove(key,function(err,response){
