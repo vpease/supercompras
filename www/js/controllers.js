@@ -2,8 +2,12 @@ angular.module('controllers', [])
     .controller('LoginCtrl',function($scope,Cats){
         Cats.data();
     })
-    .controller('DashCtrl', function($scope,Cats) {
-        //Cats.data();
+    .controller('DashCtrl', function($scope,Cats,comics) {
+        $scope.comics = comics.rows;
+        $scope.getCover = function(colid){
+            Cats.get(colid)
+        };
+
     })
     .controller('CatsCtrl', function($scope,$ionicSlideBoxDelegate, cats) {
         $scope.cats = cats.rows;

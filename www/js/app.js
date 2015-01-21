@@ -65,6 +65,12 @@ angular.module('starter', ['ionic', 'controllers', 'services'])
                 controller: 'DashCtrl'
               }
             },
+            resolve:{
+              comics:function(Cats){
+                res = Cats.getUltimos(0,5);
+                return res;
+              }
+            },
             onEnter: function(){
               console.log('Estoy en el estado tab.dash');
             },
