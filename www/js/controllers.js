@@ -35,6 +35,9 @@ angular.module('controllers', [])
         $scope.comic = comic;
 
     })
+    .controller('BuscarCtrl',function($scope,codigos){
+        $scope.barcodes= codigos;
+    })
     .controller('AccountCtrl', function($scope) {
 
     });

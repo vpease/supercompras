@@ -190,6 +190,12 @@ angular.module('starter', ['ionic', 'controllers', 'services'])
                 controller: 'BuscarCtrl'
               }
             },
+              resolve:{
+                  codigos: function(Cats){
+                      res = Cats.getBarcode();
+                      return res;
+                  }
+              },
             onEnter: function(){
               console.log('Estoy en el estado tab.buscar');
             },
