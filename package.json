@@ -1,7 +1,7 @@
 {
   "name": "supercompras",
   "version": "1.0.0",
-  "description": "supercompras: An Ionic project",
+  "description": "supercompras: tu catálogo de comics publicadas en Perú",
   "dependencies": {
     "gulp": "^3.5.6",
     "gulp-sass": "^0.7.1",

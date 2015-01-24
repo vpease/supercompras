@@ -1,6 +1,6 @@
 {
   "name": "supercompras",
-  "app_id": "",
+  "app_id": "90111ad3",
   "gulpStartupTasks": [
     "sass",
     "watch"

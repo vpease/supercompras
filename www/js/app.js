@@ -5,9 +5,9 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'controllers', 'services'])
+angular.module('starter', ['ionic', 'controllers', 'services','ngCordova'])
 
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform,$cordovaAdMob,Ads) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -18,10 +18,47 @@ angular.module('starter', ['ionic', 'controllers', 'services'])
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
+      console.log("App is ready!!");
+      window.localStorage['cordovaready']='true';
+      Ads.getPlat().then(function(result){
+          if (result){
+              var options = {
+                  publisherID: result.banner,
+                  bannerAtTop: false, // Set to true, to put banner at top
+                  overlap: false, // True to allow banner overlap webview
+                  offsetTopBar: true, // True to avoid ios7 status bar overlap
+                  isTesting: true, // receiving test to
+                  Autoshow: true // auto show interstitial When loaded to
+                  };
+              var admob = window.plugins.AdMob;
+              admob.createBannerView(options,
+                  function () {
+                      console.log ('success');
+                      admob.requestAd(
+                          { 'isTesting': false },
+                          function() {
+                              admob.showAd(true);
+                          },
+                          function() { console.log('failed to request ad'); }
+                      );
+                  },
+                  function (){
+                      console.log ('error');
+                  }
+              );
+
+             admob.createInterstitialView({adId:result.interstitial,autoshow:false});
+             admob.showInterstitial();
+          }
+      });
   });
 })
     .run(function($rootScope,$location){
       $rootScope.$on('db:uptodate',function(){
+          ready = window.localStorage['cordovaready']||'false';
+          while (ready=='false') {
+              ready = window.localStorage['cordovaready']||'false';
+          };
         $location.path('/tab/dash');
         $rootScope.$apply();
       });
@@ -35,16 +72,16 @@ angular.module('starter', ['ionic', 'controllers', 'services'])
       // Set up the various states which the app can be in.
       // Each state's controller can be found in controllers.js
       $stateProvider
-          .state('login',{
-            url: "/login",
-            templateUrl: "templates/login.html",
-            controller: "LoginCtrl",
-            onEnter: function(){
-              console.log('Estoy en el estado login');
-            },
-            onExit: function(){
-              console.log('Saliendo del estado login')
-            }
+          .state('loading',{
+              url:"/app",
+              templateUrl: "templates/login.html",
+              controller: "LoginCtrl",
+              onEnter: function(){
+                  console.log('Estoy en el estado login');
+              },
+              onExit: function(){
+                  console.log('Saliendo del estado login')
+              }
           })
           .state('tab', {
             url: "/tab",
@@ -71,8 +108,9 @@ angular.module('starter', ['ionic', 'controllers', 'services'])
                 return res;
               }
             },
-            onEnter: function(){
-              console.log('Estoy en el estado tab.dash');
+            onEnter: function($ionicViewService){
+                console.log('Estoy en el estado tab.dash');
+                $ionicViewService.clearHistory();
             },
             onExit: function(){
               console.log('Saliendo del estado tab.dash')
@@ -220,6 +258,6 @@ angular.module('starter', ['ionic', 'controllers', 'services'])
           });
   // if none of the above states are matched, use this as the fallback
   //$urlRouterProvider.otherwise('/tab/dash');
-      $urlRouterProvider.otherwise('/login');
+      $urlRouterProvider.otherwise('/app');
 });
 

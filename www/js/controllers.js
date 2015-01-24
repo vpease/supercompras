@@ -1,6 +1,7 @@
 angular.module('controllers', [])
-    .controller('LoginCtrl',function($scope,Cats){
+    .controller('LoginCtrl',function($scope,$cordovaAdMob,Cats,Ads){
         Cats.data();
+
     })
     .controller('DashCtrl', function($scope,Cats,comics) {
         $scope.comics = comics.rows;

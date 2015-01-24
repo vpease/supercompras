@@ -3,6 +3,38 @@ angular.module('services', ['db'])
 /**
  * A simple example service that returns some data.
  */
+.factory('Ads',function($q,$cordovaDevice,$cordovaAdMob){
+        var platform ="";
+        var admobid = {};
+        return {
+            getPlat: function(){
+                var dfd = $q.defer();
+                //platform = $cordovaDevice.getPlatform();
+
+                if( /(android)/i.test(navigator.userAgent) ) { // for android
+                    admobid = {
+                        banner: 'ca-app-pub-8360727579286709/4765103872', // or DFP format "/6253334/dfp_example_ad"
+                        interstitial: 'ca-app-pub-8360727579286709/6241837074'
+                    };
+                } else if(/(ipod|iphone|ipad)/i.test(navigator.userAgent)) { // for ios
+                    admobid = {
+                        banner: 'ca-app-pub-8360727579286709/4485902276', // or DFP format "/6253334/dfp_example_ad"
+                        interstitial: 'ca-app-pub-8360727579286709/5962635473'
+                    };
+                } else { // for windows phone
+                    admobid = {
+                        banner: 'ca-app-pub-8360727579286709/5823034677', // or DFP format "/6253334/dfp_example_ad"
+                        interstitial: 'ca-app-pub-8360727579286709/7299767879'
+                    };
+                }
+                dfd.resolve(admobid);
+                return dfd.promise;
+            },
+            getAdid: function(){
+                return admobid;
+            }
+        }
+    })
 .factory('Cats', function($q,DB) {
       var cats = [
         { _id: 'cat1', tipo: 'catalogo', avatar: 'img/cats/avatar01.png', class:'cat01', name: 'Marvel', image:'img/cats/cat01.png', color: 'red'},
