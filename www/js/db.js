@@ -9,7 +9,8 @@ angular.module('db',[])
         self.init = function() {
             if (!self.db) {
                 console.log('database is closed');
-                self.db = new PouchDB('supercomics',{adapter: 'websql',auto_compaction:true});
+                //self.db = new PouchDB('supercomics',{adapter: 'websql',auto_compaction:true});
+                self.db = new PouchDB('supercomics',{auto_compaction:true});
                 self.db.compact().then(function(info){
                     console.log('DB compactada');
                 }).catch(function(err){

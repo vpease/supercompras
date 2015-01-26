@@ -6,7 +6,7 @@
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'controllers', 'services','ngCordova'])
-    .run(function($ionicPlatform,$cordovaAdMob,Ads) {
+    .run(function($ionicPlatform,$cordovaAdMob,Ads,Cats) {
         $ionicPlatform.ready(function() {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)
@@ -32,7 +32,7 @@ angular.module('starter', ['ionic', 'controllers', 'services','ngCordova'])
                     var admob = window.plugins.AdMob;
                     admob.createBannerView(options,
                         function () {
-                            console.log ('success');
+                            console.log ('success creando el banner');
                             admob.requestAd({ 'isTesting': true },
                                 function() {
                                     admob.showAd(true);
@@ -43,15 +43,16 @@ angular.module('starter', ['ionic', 'controllers', 'services','ngCordova'])
                             );
                         },
                         function (){
-                            console.log ('error');
+                            console.log ('error creando el banner');
                         }
                     );
                     admob.createInterstitialView({adId:result.interstitial,autoshow:false});
                     admob.showInterstitial();
                 }
-      });
-  });
-})
+            });
+            Cats.data();
+        });
+    })
     .run(function($rootScope,$location,Cats){
         $rootScope.$on('dbinit:uptodate',function(){
                        console.log('Terminó la syncronizacion de diseño');
