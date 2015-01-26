@@ -6,63 +6,69 @@
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'controllers', 'services','ngCordova'])
-
-.run(function($ionicPlatform,$cordovaAdMob,Ads) {
-  $ionicPlatform.ready(function() {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
-    if(window.cordova && window.cordova.plugins.Keyboard) {
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-    }
-    if(window.StatusBar) {
-      // org.apache.cordova.statusbar required
-      StatusBar.styleDefault();
-    }
-      console.log("App is ready!!");
-      window.localStorage['cordovaready']='true';
-      Ads.getPlat().then(function(result){
-          if (result){
-              var options = {
-                  publisherID: result.banner,
-                  bannerAtTop: false, // Set to true, to put banner at top
-                  overlap: false, // True to allow banner overlap webview
-                  offsetTopBar: true, // True to avoid ios7 status bar overlap
-                  isTesting: true, // receiving test to
-                  Autoshow: true // auto show interstitial When loaded to
+    .run(function($ionicPlatform,$cordovaAdMob,Ads) {
+        $ionicPlatform.ready(function() {
+        // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+        // for form inputs)
+            if(window.cordova && window.cordova.plugins.Keyboard) {
+                cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+            };
+            if(window.StatusBar) {
+                // org.apache.cordova.statusbar required
+                StatusBar.styleDefault();
+            }
+            console.log("App is ready!!");
+            window.localStorage['cordovaready']='true';
+            Ads.getPlat().then(function(result){
+                if (result){
+                    var options = {
+                        publisherID: result.banner,
+                        bannerAtTop: false, // Set to true, to put banner at top
+                        overlap: false, // True to allow banner overlap webview
+                        offsetTopBar: true, // True to avoid ios7 status bar overlap
+                        isTesting: true, // receiving test to
+                        Autoshow: true // auto show interstitial When loaded to
                   };
-              var admob = window.plugins.AdMob;
-              admob.createBannerView(options,
-                  function () {
-                      console.log ('success');
-                      admob.requestAd(
-                          { 'isTesting': false },
-                          function() {
-                              admob.showAd(true);
-                          },
-                          function() { console.log('failed to request ad'); }
-                      );
-                  },
-                  function (){
-                      console.log ('error');
-                  }
-              );
-
-             admob.createInterstitialView({adId:result.interstitial,autoshow:false});
-             admob.showInterstitial();
-          }
+                    var admob = window.plugins.AdMob;
+                    admob.createBannerView(options,
+                        function () {
+                            console.log ('success');
+                            admob.requestAd({ 'isTesting': true },
+                                function() {
+                                    admob.showAd(true);
+                                },
+                                function() {
+                                    console.log('failed to request ad');
+                                }
+                            );
+                        },
+                        function (){
+                            console.log ('error');
+                        }
+                    );
+                    admob.createInterstitialView({adId:result.interstitial,autoshow:false});
+                    admob.showInterstitial();
+                }
       });
   });
 })
-    .run(function($rootScope,$location){
-      $rootScope.$on('db:uptodate',function(){
-          ready = window.localStorage['cordovaready']||'false';
-          while (ready=='false') {
-              ready = window.localStorage['cordovaready']||'false';
-          };
-        $location.path('/tab/dash');
-        $rootScope.$apply();
-      });
+    .run(function($rootScope,$location,Cats){
+        $rootScope.$on('dbinit:uptodate',function(){
+                       console.log('Terminó la syncronizacion de diseño');
+            ready = window.localStorage['cordovaready']||'false';
+            while (ready=='false') {
+                ready = window.localStorage['cordovaready']||'false';
+            };
+            $location.path('/tab/dash');
+            $rootScope.$apply();
+            Cats.replicate();
+        });
+         $rootScope.$on('db:uptodate',function(){
+                        console.log('Terminó la syncronizacion de datos');
+                        
+                        });
     })
+
 .config(function($stateProvider, $urlRouterProvider,$compileProvider) {
       $compileProvider.imgSrcSanitizationWhitelist('.*');
       //$compileProvider.imgSrcSanitizationWhitelist('img/*');
@@ -104,7 +110,7 @@ angular.module('starter', ['ionic', 'controllers', 'services','ngCordova'])
             },
             resolve:{
               comics:function(Cats){
-                res = Cats.getUltimos(0,5);
+                res = Cats.getUltimos(0,4);
                 return res;
               }
             },

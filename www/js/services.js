@@ -51,6 +51,9 @@ angular.module('services', ['db'])
           // DB.bulk(cols);
           // DB.bulk(comics);
       },
+      replicate: function() {
+          DB.replicate();
+      },
       getDB: function(key){
           var dfd = $q.defer();
           DB.get(key)

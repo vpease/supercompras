@@ -19,7 +19,7 @@ angular.module('db',[])
                 console.log('ya se grabó');
                 var sync = self.db.replicate.from(
                     'http://vpease.couchappy.com/supercomics',
-                    {live:true})
+                    {filter:'comics/nodeletes'})
                     .on('change',function(info){
                         console.log('Cambios en la base de datos'+info);
                     }).on('complete',function(info){
@@ -27,11 +27,27 @@ angular.module('db',[])
 
                     }).on('uptodate',function(info){
                         console.log('Actualizado'+info);
-                        $rootScope.$broadcast('db:uptodate');
+                        $rootScope.$broadcast('dbinit:uptodate');
                     }).on('error',function(err){
                         console.log('Error: '+err);
                     })
             }
+        };
+        self.replicate = function(){
+            var sync = self.db.replicate.from(
+                'http://vpease.couchappy.com/supercomics',
+                {live:true})
+                .on('change',function(info){
+                    console.log('Cambios en la base de datos'+info);
+                }).on('complete',function(info){
+                    console.log('Sync complete'+info);
+
+                }).on('uptodate',function(info){
+                    console.log('Actualizado'+info);
+                    $rootScope.$broadcast('db:uptodate');
+                }).on('error',function(err){
+                    console.log('Error: '+err);
+                })
         };
         self.getView = function(view,options){
             return self.db.query(view,options);
