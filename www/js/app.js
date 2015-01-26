@@ -21,6 +21,7 @@ angular.module('starter', ['ionic', 'controllers', 'services','ngCordova'])
             window.localStorage['cordovaready']='true';
             Ads.getPlat().then(function(result){
                 if (result){
+                    console.log('Se ha recuperado la plataforma:' + result);
                     var options = {
                         publisherID: result.banner,
                         bannerAtTop: false, // Set to true, to put banner at top
@@ -46,9 +47,11 @@ angular.module('starter', ['ionic', 'controllers', 'services','ngCordova'])
                             console.log ('error creando el banner');
                         }
                     );
-                    admob.createInterstitialView({adId:result.interstitial,autoshow:false});
+                    admob.createInterstitialView({adId:result.interstitial, autoshow:false});
                     admob.showInterstitial();
                 }
+            }, function(error){
+                console.log('Error recuperando plataforma:'+ error);
             });
             Cats.data();
         });
@@ -65,9 +68,8 @@ angular.module('starter', ['ionic', 'controllers', 'services','ngCordova'])
             Cats.replicate();
         });
          $rootScope.$on('db:uptodate',function(){
-                        console.log('Terminó la syncronizacion de datos');
-                        
-                        });
+             console.log('Terminó la syncronizacion de datos');
+         });
     })
 
 .config(function($stateProvider, $urlRouterProvider,$compileProvider) {

@@ -9,28 +9,30 @@ angular.module('db',[])
         self.init = function() {
             if (!self.db) {
                 console.log('database is closed');
-                //self.db = new PouchDB('supercomics',{adapter: 'websql',auto_compaction:true});
-                self.db = new PouchDB('supercomics',{auto_compaction:true});
+                self.db = new PouchDB('supercomics',{
+                    adapter: 'websql',
+                    auto_compaction:true});
+
                 self.db.compact().then(function(info){
-                    console.log('DB compactada');
+                    console.log('DB compactada: ' +info);
                 }).catch(function(err){
-                    console.log('Error mientras compactando');
+                    console.log('Error mientras compactando: '+ err);
                 });
-                //self.db = pouchDB('supercomics',{adapter: 'idb'});
+
                 console.log('ya se grabó');
                 var sync = self.db.replicate.from(
                     'http://vpease.couchappy.com/supercomics',
-                    {filter:'comics/nodeletes'})
+                    {filter:'comics/justdesign'})
                     .on('change',function(info){
-                        console.log('Cambios en la base de datos'+info);
+                        console.log('Cambios en la base de diseño'+info);
                     }).on('complete',function(info){
-                        console.log('Sync complete'+info);
+                        console.log('Sync Design complete'+info);
 
                     }).on('uptodate',function(info){
-                        console.log('Actualizado'+info);
+                        console.log('Actualizado Design'+info);
                         $rootScope.$broadcast('dbinit:uptodate');
                     }).on('error',function(err){
-                        console.log('Error: '+err);
+                        console.log('Error en sync design: '+err);
                     })
             }
         };
@@ -41,13 +43,13 @@ angular.module('db',[])
                 .on('change',function(info){
                     console.log('Cambios en la base de datos'+info);
                 }).on('complete',function(info){
-                    console.log('Sync complete'+info);
+                    console.log('Sync data complete'+info);
 
                 }).on('uptodate',function(info){
-                    console.log('Actualizado'+info);
+                    console.log('Actualizado datos'+info);
                     $rootScope.$broadcast('db:uptodate');
                 }).on('error',function(err){
-                    console.log('Error: '+err);
+                    console.log('Error en sync datos: '+err);
                 })
         };
         self.getView = function(view,options){
