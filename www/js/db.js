@@ -21,7 +21,7 @@ angular.module('db',[])
 
                 console.log('ya se grabó');
                 var sync = self.db.replicate.from(
-                    'http://vpease.couchappy.com/supercomics',
+                    'http://comics.couchappy.com/supercomics',
                     {filter:'comics/justdesign'})
                     .on('change',function(info){
                         console.log('Cambios en la base de diseño'+info);
@@ -38,7 +38,7 @@ angular.module('db',[])
         };
         self.replicate = function(){
             var sync = self.db.replicate.from(
-                'http://vpease.couchappy.com/supercomics',
+                'http://comics.couchappy.com/supercomics',
                 {live:true})
                 .on('change',function(info){
                     console.log('Cambios en la base de datos'+info);
@@ -69,6 +69,9 @@ angular.module('db',[])
         };
         self.get = function(key){
             return self.db.get(key);
+        };
+        self.getAttach = function(key,attach){
+            return self.db.getAttachment(key,attach);
         };
         self.put = function(object){
             if (!self.db){

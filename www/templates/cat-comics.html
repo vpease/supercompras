@@ -13,7 +13,7 @@
             <img style="width:auto;height:auto" src={{cat.avatar}}>
           </div>
           <div class="col-30">
-            <img style="width:auto;height:auto" src={{col.cover}}>
+            <img style="width:auto;height:auto" src={{col.tipo}}>
           </div>
           <div class="col">
             <h2>{{col.name}}</h2>
@@ -26,7 +26,7 @@
       <a class="item item-thumbnail-left"
          ng-repeat="comic in comics"
          ui-sref='tab.comic({catId:cat._id,colId:col._id,comicId:comic.id})'>
-        <img src='{{comic.doc.cover}}'>
+        <img src='{{comic.doc.tipo}}'>
         <h2>Número: {{comic.doc.numero}} de {{col.numeros}}</h2>
         <p>Publicado: {{comic.doc.published}}</p>
         <p>Notas: {{comic.doc.notas}}</p>

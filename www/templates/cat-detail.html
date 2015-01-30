@@ -24,7 +24,7 @@
          ng-repeat="col in cols"
               ui-sref='tab.comics({catId:cat._id,colId:col.id})'>
         <div class="row">
-        <div class="col-20"><img src='{{col.doc.cover}}'></div>
+        <div class="col-20"><img src='{{col.doc.tipo}}'></div>
         <div class="col">
           <h2>{{col.doc.name}}</h2>
           <p>{{col.doc.numeros}} números</p>

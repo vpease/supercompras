@@ -122,6 +122,19 @@ angular.module('services', ['db'])
               });
           return dfd.promise;
       },
+      getAttach: function(key,attach){
+          var dfd = $q.defer();
+          DB.getAttach(key,attach)
+              .then(function(result){
+                  console.log('Cargar blob');
+                  url = window. URL || window.webkitURL;
+                  res = url.createObjectURL(result);
+                  dfd.resolve(res);
+              },function(error){
+                  console.log('Error cargando blob:' + error);
+              });
+          return dfd.promise;
+      },
       put: function(object){
           DB.put(object);
       },

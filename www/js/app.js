@@ -63,12 +63,14 @@ angular.module('starter', ['ionic', 'controllers', 'services','ngCordova'])
             while (ready=='false') {
                 ready = window.localStorage['cordovaready']||'false';
             };
-            $location.path('/tab/dash');
+            $location.path('/tab/cats');
             $rootScope.$apply();
             Cats.replicate();
         });
          $rootScope.$on('db:uptodate',function(){
              console.log('Terminó la syncronizacion de datos');
+             $location.path('/tab/dash');
+             $rootScope.$apply();
          });
     })
 
@@ -113,7 +115,7 @@ angular.module('starter', ['ionic', 'controllers', 'services','ngCordova'])
             },
             resolve:{
               comics:function(Cats){
-                res = Cats.getUltimos(0,4);
+                res = Cats.getUltimos(0,20);
                 return res;
               }
             },
