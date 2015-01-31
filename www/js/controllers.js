@@ -1,4 +1,4 @@
-angular.module('controllers', [])
+angular.module('controllers', ['ngCordova'])
     .controller('LoginCtrl',function($scope,$cordovaAdMob,Cats,Ads){
         //Cats.data();
 
@@ -100,8 +100,15 @@ angular.module('controllers', [])
         };
         getCover();
     })
-    .controller('BuscarCtrl',function($scope,codigos){
+    .controller('BuscarCtrl',function($scope,codigos,$cordovaBarcodeScanner){
         $scope.barcodes= codigos;
+        $scope.getBarcode = function(){
+            $cordovaBarcodeScanner.scan().then(function(barcodeData){
+                alert (barcodeData.text)
+            },function(error){
+                alert ('Error:'+error);
+            });
+        };
     })
     .controller('AccountCtrl', function($scope) {
 

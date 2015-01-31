@@ -1,5 +1,6 @@
 <ion-view title="Buscar">
-  <ion-content>
+    <div style="height: 50px"></div>
+  <ion-content has-header="true"  header-shrink>
       <div class="card">
           <div class="item item-divider">
               <i class="icon ion-android-search"></i>
@@ -10,7 +11,7 @@
               <p>Los números especiales tienen un código especial</p>
           </div>
           <div class="item item-divider">
-              <button class="button button-block">
+              <button class="button button-block" ng-click="getBarcode()">
                   Scan
               </button>
           </div>
