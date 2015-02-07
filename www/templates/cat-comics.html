@@ -7,7 +7,32 @@
 <ion-view title="{{col.name}}">
   <ion-content has-header="true" padding="true">
     <div class="card">
-      <div class="item item-thumbnail">
+        <div class="item item-avatar">
+            <div class="row">
+                <div class="col-20">
+                    <a ui-sref='tab.cat-detail({catId:cat._id})'>
+                        <img style="width:auto;height:auto" src={{cat.avatar}}>
+                    </a>
+                </div>
+                <div class="col" align="center">
+                    <h2>{{cat.name}}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="item item-thumbnail">
+            <div class="row">
+                <div class="col-30">
+                    <img style="width:auto;height:auto" src={{col.tipo}}>
+                </div>
+                <div class="col">
+                    <h2>{{col.name}}</h2>
+                    <p>{{col.tags}}</p>
+                    <p>{{col.numeros}} números</p>
+                </div>
+            </div>
+        </div>
+        <div class="item item-divider"></div>
+      <!-- <div class="item item-thumbnail">
         <div class="row">
           <div class="col-30">
             <img style="width:auto;height:auto" src={{cat.avatar}}>
@@ -16,12 +41,13 @@
             <img style="width:auto;height:auto" src={{col.tipo}}>
           </div>
           <div class="col">
-            <h2>{{col.name}}</h2>
-            <p>{{cat.name}}</p>
+              <h2>{{col.name}}</h2>
+              <p>{{col.tags}}</p>
+              <p>{{col.numeros}} números</p>
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     <div class="list list-inset">
       <a class="item item-thumbnail-left"
          ng-repeat="comic in comics"

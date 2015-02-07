@@ -3,7 +3,7 @@ angular.module('services', ['db'])
 /**
  * A simple example service that returns some data.
  */
-.factory('Ads',function($q,$cordovaDevice,$cordovaAdMob){
+.factory('Ads',function($q){
         var platform ="";
         var admobid = {};
         return {
@@ -13,17 +13,17 @@ angular.module('services', ['db'])
 
                 if( /(android)/i.test(navigator.userAgent) ) { // for android
                     admobid = {
-                        banner: 'ca-app-pub-8360727579286709/4765103872', // or DFP format "/6253334/dfp_example_ad"
+                        banner: 'ca-app-pub-8360727579286709/4765103872',
                         interstitial: 'ca-app-pub-8360727579286709/6241837074'
                     };
-                } else if(/(ipod|iphone|ipad)/i.test(navigator.userAgent)) { // for ios
+                } else if(/(ipod|iphone|ipad)/i.test(navigator.userAgent)) {
                     admobid = {
-                        banner: 'ca-app-pub-8360727579286709/4485902276', // or DFP format "/6253334/dfp_example_ad"
+                        banner: 'ca-app-pub-8360727579286709/4485902276',
                         interstitial: 'ca-app-pub-8360727579286709/5962635473'
                     };
-                } else { // for windows phone
+                } else {
                     admobid = {
-                        banner: 'ca-app-pub-8360727579286709/5823034677', // or DFP format "/6253334/dfp_example_ad"
+                        banner: 'ca-app-pub-8360727579286709/5823034677',
                         interstitial: 'ca-app-pub-8360727579286709/7299767879'
                     };
                 }
@@ -42,14 +42,12 @@ angular.module('services', ['db'])
         { _id: 'cat3', tipo: 'catalogo', avatar: 'img/cats/avatar03.png', class:'cat03', name: 'Image',image:'img/cats/cat03.png', color: 'yellow' },
         { _id: 'cat4', tipo: 'catalogo', avatar: 'img/cats/avatar04.png', class:'cat04', name: 'Dark Horse',image:'img/cats/cat04.png', color: 'cyan' },
         { _id: 'cat5', tipo: 'catalogo', avatar: 'img/cats/avatar05.png', class:'cat05', name: 'Peru21',image:'img/cats/cat05.png', color: 'white' },
-        { _id: 'cat6', tipo: 'catalogo', avatar: 'img/cats/avatar06.png', class:'cat06', name: 'VUK',image:'img/cats/cat06.png', color: 'black' }
+        { _id: 'cat6', tipo: 'catalogo', avatar: 'img/cats/avatar06.png', class:'cat06', name: 'VUK',image:'img/cats/cat06.png', color: 'black' },
+          { _id: 'cat7', tipo: 'catalogo', avatar: 'img/cats/avatar07.png', class:'cat07', name: 'Skecthboy',image:'img/cats/cat07.png', color: 'white' }
       ];
   return {
       data: function(){
           DB.init();
-          //DB.bulk(cats);
-          // DB.bulk(cols);
-          // DB.bulk(comics);
       },
       replicate: function() {
           DB.replicate();
@@ -100,7 +98,7 @@ angular.module('services', ['db'])
       },
       getComs: function(colid){
           var dfd = $q.defer();
-          stkey ='com_'+colid;
+          stkey ='com_'+colid+'_';
           enkey = stkey+'\uffff';
           DB.getAll({startkey:stkey,endkey:enkey,include_docs:true})
               .then(function(result){
@@ -111,14 +109,14 @@ angular.module('services', ['db'])
               });
           return dfd.promise;
       },
-      getBarcode: function(){
+      getBarcode: function(barcode){
           var dfd =$q.defer();
-          DB.getView('comics/barcode',{descending:true,group:true})
+          DB.getView('comics/barcode',{startkey:[barcode],endkey:[barcode,{}],descending:true,group:true})
               .then(function(result){
-                  console.log('Recuperando Ultimos');
+                  console.log('Recuperando Barcode');
                   dfd.resolve(result);
               },function(error){
-                  console.log('Error en getUltimo:'+error);
+                  console.log('Error en Barcode:'+error);
               });
           return dfd.promise;
       },
@@ -126,7 +124,7 @@ angular.module('services', ['db'])
           var dfd = $q.defer();
           DB.getAttach(key,attach)
               .then(function(result){
-                  console.log('Cargar blob');
+                  //console.log('Cargar blob');
                   url = window. URL || window.webkitURL;
                   res = url.createObjectURL(result);
                   dfd.resolve(res);
@@ -156,4 +154,3 @@ angular.module('services', ['db'])
       }
   }
 });
-

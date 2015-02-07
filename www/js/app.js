@@ -1,11 +1,4 @@
-// Ionic Starter App
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-// 'starter.services' is found in services.js
-// 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'controllers', 'services','ngCordova'])
+angular.module('comics', ['ionic', 'controllers', 'services','ngCordova'])
     .run(function($ionicPlatform,$cordovaAdMob,Ads,Cats) {
         $ionicPlatform.ready(function() {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -19,6 +12,9 @@ angular.module('starter', ['ionic', 'controllers', 'services','ngCordova'])
             }
             console.log("App is ready!!");
             window.localStorage['cordovaready']='true';
+
+
+
             Ads.getPlat().then(function(result){
                 if (result){
                     console.log('Se ha recuperado la plataforma:' + result);
@@ -239,18 +235,33 @@ angular.module('starter', ['ionic', 'controllers', 'services','ngCordova'])
                 controller: 'BuscarCtrl'
               }
             },
-              resolve:{
-                  codigos: function(Cats){
-                      res = Cats.getBarcode();
-                      return res;
-                  }
-              },
             onEnter: function(){
               console.log('Estoy en el estado tab.buscar');
             },
             onExit: function(){
               console.log('Saliendo del estado tab.buscar')
             }
+          })
+          .state('tab.buscar.result',{
+              url: '/:barcode',
+              views: {
+                  'tab-buscar': {
+                      templateUrl: 'templates/buscar-res.html',
+                      controller: 'BuscarResCtrl'
+                  }
+              },
+              resolve: {
+                  cols: function(Cats,$stateParams){
+                      res = Cats.getBarcode($stateParams.barcode);
+                      return res;
+                  }
+              },
+              onEnter: function(){
+                  console.log('Entrando al estado Buscar.result');
+              },
+              onExit: function(){
+                  console.log('Saliendo del estado Buscar.result');
+              }
           })
           .state('tab.account', {
             url: '/account',
@@ -271,4 +282,3 @@ angular.module('starter', ['ionic', 'controllers', 'services','ngCordova'])
   //$urlRouterProvider.otherwise('/tab/dash');
       $urlRouterProvider.otherwise('/app');
 });
-

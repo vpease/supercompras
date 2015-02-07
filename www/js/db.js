@@ -9,9 +9,20 @@ angular.module('db',[])
         self.init = function() {
             if (!self.db) {
                 console.log('database is closed');
-                self.db = new PouchDB('supercomics',{
+
+                //console.log('voy a cargar el plugin');
+                //PouchDB.plugin("pouchdb-load");
+                //console.log('ya cargué el plugin');
+
+                self.db = new window.PouchDB('supercomics',{
                     adapter: 'websql',
+                    size:2000,
                     auto_compaction:true});
+                if (!self.db.adapter){
+                    self.db  = new PouchDB('supercomics');
+                }
+
+                self.initial();
 
                 self.db.compact().then(function(info){
                     console.log('DB compactada: ' +info);
@@ -20,26 +31,44 @@ angular.module('db',[])
                 });
 
                 console.log('ya se grabó');
-                var sync = self.db.replicate.from(
-                    'http://comics.couchappy.com/supercomics',
-                    {filter:'comics/justdesign'})
-                    .on('change',function(info){
-                        console.log('Cambios en la base de diseño'+info);
-                    }).on('complete',function(info){
-                        console.log('Sync Design complete'+info);
-
-                    }).on('uptodate',function(info){
-                        console.log('Actualizado Design'+info);
-                        $rootScope.$broadcast('dbinit:uptodate');
-                    }).on('error',function(err){
-                        console.log('Error en sync design: '+err);
-                    })
+            }
+        };
+        self.initial = function(){
+            initial = window.localStorage['initial']||'false';
+            if (initial){
+                var dumpFiles = [
+                    'data_00000000.txt',
+                    'data_00000001.txt',
+                    'data_00000002.txt',
+                    'data_00000003.txt',
+                    'data_00000004.txt',
+                    'data_00000005.txt',
+                    'data_00000006.txt',
+                    'data_00000007.txt',
+                    'data_00000008.txt',
+                    'data_00000009.txt',
+                    'data_00000010.txt',
+                    'data_00000011.txt',
+                    'data_00000012.txt',
+                    'data_00000013.txt'
+                ];
+                window.PouchDB.utils.Promise.all(dumpFiles.map(function (dumpFile) {
+                    return self.db.load('data/' + dumpFile);
+                })).then(function () {
+                    console.log('Carga correcta');
+                    window.localStorage['initial']='true';
+                    $rootScope.$broadcast('dbinit:uptodate');
+                }).catch(function (err) {
+                    console.log('Error en la carga')
+                });
+            } else {
+                $rootScope.$broadcast('dbinit:uptodate');
             }
         };
         self.replicate = function(){
             var sync = self.db.replicate.from(
-                'http://comics.couchappy.com/supercomics',
-                {live:true})
+                'http://supermio.iriscouch.com:5984/supercomics',
+                {live:true, retry:true})
                 .on('change',function(info){
                     console.log('Cambios en la base de datos'+info);
                 }).on('complete',function(info){

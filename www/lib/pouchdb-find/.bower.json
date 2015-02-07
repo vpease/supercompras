@@ -1,0 +1,39 @@
+{
+  "name": "pouchdb-find",
+  "version": "0.1.0",
+  "homepage": "https://github.com/nolanlawson/pouchdb-find",
+  "authors": [
+    "Nolan Lawson <nolan.lawson@gmail.com>"
+  ],
+  "description": "PouchDB indexes",
+  "main": "dist/pouchdb.find.min.js",
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+    "pouchdb",
+    "find",
+    "indexes",
+    "couchdb",
+    "plugin"
+  ],
+  "license": "Apache 2",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "vendor"
+  ],
+  "_release": "0.1.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.1.0",
+    "commit": "a0376f9c27a00b835c2e36de48e0093d9bf74f01"
+  },
+  "_source": "git://github.com/nolanlawson/pouchdb-find.git",
+  "_target": "~0.1.0",
+  "_originalSource": "pouchdb-find",
+  "_direct": true
+}

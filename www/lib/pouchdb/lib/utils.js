@@ -9,9 +9,10 @@ exports.getArguments = require('argsarray');
 var buffer = require('./deps/buffer');
 var errors = require('./deps/errors');
 var EventEmitter = require('events').EventEmitter;
-var collections = require('./deps/collections');
+var collections = require('pouchdb-collections');
 exports.Map = collections.Map;
 exports.Set = collections.Set;
+var parseDoc = require('./deps/parse-doc');
 
 if (typeof global.Promise === 'function') {
   exports.Promise = global.Promise;
@@ -19,42 +20,6 @@ if (typeof global.Promise === 'function') {
   exports.Promise = require('bluebird');
 }
 var Promise = exports.Promise;
-
-function toObject(array) {
-  var obj = {};
-  array.forEach(function (item) { obj[item] = true; });
-  return obj;
-}
-// List of top level reserved words for doc
-var reservedWords = toObject([
-  '_id',
-  '_rev',
-  '_attachments',
-  '_deleted',
-  '_revisions',
-  '_revs_info',
-  '_conflicts',
-  '_deleted_conflicts',
-  '_local_seq',
-  '_rev_tree',
-  //replication documents
-  '_replication_id',
-  '_replication_state',
-  '_replication_state_time',
-  '_replication_state_reason',
-  '_replication_stats'
-]);
-
-// List of reserved words that should end up the document
-var dataWords = toObject([
-  '_attachments',
-  //replication documents
-  '_replication_id',
-  '_replication_state',
-  '_replication_state_time',
-  '_replication_state_reason',
-  '_replication_stats'
-]);
 
 exports.lastIndexOf = function (str, char) {
   for (var i = str.length - 1; i >= 0; i--) {
@@ -80,28 +45,6 @@ exports.pick = function (obj, arr) {
 };
 
 exports.inherits = require('inherits');
-
-// Determine id an ID is valid
-//   - invalid IDs begin with an underescore that does not begin '_design' or
-//     '_local'
-//   - any other string value is a valid id
-// Returns the specific error object for each case
-exports.invalidIdError = function (id) {
-  var err;
-  if (!id) {
-    err = new TypeError(errors.MISSING_ID.message);
-    err.status = 412;
-  } else if (typeof id !== 'string') {
-    err = new TypeError(errors.INVALID_ID.message);
-    err.status = 400;
-  } else if (/^_/.test(id) && !(/^_(design|local)/).test(id)) {
-    err = new TypeError(errors.RESERVED_ID.message);
-    err.status = 400;
-  }
-  if (err) {
-    throw err;
-  }
-};
 
 function isChromeApp() {
   return (typeof chrome !== "undefined" &&
@@ -149,7 +92,7 @@ exports.isDeleted = function (metadata, rev) {
 
 exports.revExists = function (metadata, rev) {
   var found = false;
-  merge.traverseRevTree(metadata.rev_tree, function (leaf, pos, id, acc, opts) {
+  merge.traverseRevTree(metadata.rev_tree, function (leaf, pos, id) {
     if ((pos + '-' + id) === rev) {
       found = true;
     }
@@ -179,97 +122,8 @@ exports.filterChange = function filterChange(opts) {
   };
 };
 
-// Preprocess documents, parse their revisions, assign an id and a
-// revision for new writes that are missing them, etc
-exports.parseDoc = function (doc, newEdits) {
-
-  var nRevNum;
-  var newRevId;
-  var revInfo;
-  var error;
-  var opts = {status: 'available'};
-  if (doc._deleted) {
-    opts.deleted = true;
-  }
-
-  if (newEdits) {
-    if (!doc._id) {
-      doc._id = exports.uuid();
-    }
-    newRevId = exports.uuid(32, 16).toLowerCase();
-    if (doc._rev) {
-      revInfo = /^(\d+)-(.+)$/.exec(doc._rev);
-      if (!revInfo) {
-        error = new Error('bad_request');
-        error.message = 'Invalid rev format';
-        error.error = true;
-        return error;
-      }
-      doc._rev_tree = [{
-        pos: parseInt(revInfo[1], 10),
-        ids: [revInfo[2], {status: 'missing'}, [[newRevId, opts, []]]]
-      }];
-      nRevNum = parseInt(revInfo[1], 10) + 1;
-    } else {
-      doc._rev_tree = [{
-        pos: 1,
-        ids : [newRevId, opts, []]
-      }];
-      nRevNum = 1;
-    }
-  } else {
-    if (doc._revisions) {
-      doc._rev_tree = [{
-        pos: doc._revisions.start - doc._revisions.ids.length + 1,
-        ids: doc._revisions.ids.reduce(function (acc, x) {
-          if (acc === null) {
-            return [x, opts, []];
-          } else {
-            return [x, {status: 'missing'}, [acc]];
-          }
-        }, null)
-      }];
-      nRevNum = doc._revisions.start;
-      newRevId = doc._revisions.ids[0];
-    }
-    if (!doc._rev_tree) {
-      revInfo = /^(\d+)-(.+)$/.exec(doc._rev);
-      if (!revInfo) {
-        error = new Error('bad_request');
-        error.message = 'Invalid rev format';
-        error.error = true;
-        return error;
-      }
-      nRevNum = parseInt(revInfo[1], 10);
-      newRevId = revInfo[2];
-      doc._rev_tree = [{
-        pos: parseInt(revInfo[1], 10),
-        ids: [revInfo[2], opts, []]
-      }];
-    }
-  }
-
-  exports.invalidIdError(doc._id);
-
-  doc._rev = [nRevNum, newRevId].join('-');
-
-  var result = {metadata : {}, data : {}};
-  for (var key in doc) {
-    if (doc.hasOwnProperty(key)) {
-      var specialKey = key[0] === '_';
-      if (specialKey && !reservedWords[key]) {
-        error = new Error(errors.DOC_VALIDATION.message + ': ' + key);
-        error.status = errors.DOC_VALIDATION.status;
-        throw error;
-      } else if (specialKey && !dataWords[key]) {
-        result.metadata[key.slice(1)] = doc[key];
-      } else {
-        result.data[key] = doc[key];
-      }
-    }
-  }
-  return result;
-};
+exports.parseDoc = parseDoc.parseDoc;
+exports.invalidIdError = parseDoc.invalidIdError;
 
 exports.isCordova = function () {
   return (typeof cordova !== "undefined" ||
@@ -282,7 +136,7 @@ exports.hasLocalStorage = function () {
     return false;
   }
   try {
-    return global.localStorage;
+    return localStorage;
   } catch (e) {
     return false;
   }
@@ -310,12 +164,12 @@ function Changes() {
       }
     });
   } else if (this.hasLocal) {
-    if (global.addEventListener) {
-      global.addEventListener("storage", function (e) {
+    if (typeof addEventListener !== 'undefined') {
+      addEventListener("storage", function (e) {
         self.emit(e.key);
       });
-    } else {
-      global.attachEvent("storage", function (e) {
+    } else { // old IE
+      window.attachEvent("storage", function (e) {
         self.emit(e.key);
       });
     }
@@ -326,7 +180,17 @@ Changes.prototype.addListener = function (dbName, id, db, opts) {
   if (this.listeners[id]) {
     return;
   }
+  var self = this;
+  var inprogress = false;
   function eventFunction() {
+    if (!self.listeners[id]) {
+      return;
+    }
+    if (inprogress) {
+      inprogress = 'waiting';
+      return;
+    }
+    inprogress = true;
     db.changes({
       include_docs: opts.include_docs,
       attachments: opts.attachments,
@@ -337,13 +201,21 @@ Changes.prototype.addListener = function (dbName, id, db, opts) {
       doc_ids: opts.doc_ids,
       view: opts.view,
       since: opts.since,
-      query_params: opts.query_params,
-      onChange: function (c) {
-        if (c.seq > opts.since && !opts.cancelled) {
-          opts.since = c.seq;
-          exports.call(opts.onChange, c);
-        }
+      query_params: opts.query_params
+    }).on('change', function (c) {
+      if (c.seq > opts.since && !opts.cancelled) {
+        opts.since = c.seq;
+        exports.call(opts.onChange, c);
       }
+    }).on('complete', function () {
+      if (inprogress === 'waiting') {
+        process.nextTick(function () {
+          self.notify(dbName);
+        });
+      }
+      inprogress = false;
+    }).on('error', function () {
+      inprogress = false;
     });
   }
   this.listeners[id] = eventFunction;
@@ -374,7 +246,7 @@ Changes.prototype.notify = function (dbName) {
   this.notifyLocalWindows(dbName);
 };
 
-if (!process.browser || !('atob' in global)) {
+if (typeof window === 'undefined' || typeof window.atob !== 'function') {
   exports.atob = function (str) {
     var base64 = new buffer(str, 'base64');
     // Node.js will just skip the characters it can't encode instead of
@@ -390,7 +262,7 @@ if (!process.browser || !('atob' in global)) {
   };
 }
 
-if (!process.browser || !('btoa' in global)) {
+if (typeof window === 'undefined' || typeof window.btoa !== 'function') {
   exports.btoa = function (str) {
     return new buffer(str, 'binary').toString('base64');
   };
@@ -433,6 +305,16 @@ exports.readAsBinaryString = function (blob, callback) {
   } else {
     reader.readAsArrayBuffer(blob);
   }
+};
+
+// simplified API. universal browser support is assumed
+exports.readAsArrayBuffer = function (blob, callback) {
+  var reader = new FileReader();
+  reader.onloadend = function (e) {
+    var result = e.target.result || new ArrayBuffer(0);
+    callback(result);
+  };
+  reader.readAsArrayBuffer(blob);
 };
 
 exports.once = function (fun) {
@@ -649,6 +531,12 @@ exports.explain404 = function (str) {
   }
 };
 
+exports.info = function (str) {
+  if (typeof console !== 'undefined' && 'info' in console) {
+    console.info(str);
+  }
+};
+
 exports.parseUri = require('./deps/parse-uri');
 
 exports.compare = function (left, right) {
@@ -656,7 +544,7 @@ exports.compare = function (left, right) {
 };
 
 exports.updateDoc = function updateDoc(prev, docInfo, results,
-                                       i, cb, write, newEdits) {
+                                       i, cb, writeDoc, newEdits) {
 
   if (exports.revExists(prev, docInfo.metadata.rev)) {
     results[i] = docInfo;
@@ -681,22 +569,36 @@ exports.updateDoc = function updateDoc(prev, docInfo, results,
     (previouslyDeleted && !deleted && merged.conflicts === 'new_branch')));
 
   if (inConflict) {
-    var err = errors.REV_CONFLICT;
+    var err = errors.error(errors.REV_CONFLICT);
     results[i] = err;
     return cb();
   }
 
+  var newRev = docInfo.metadata.rev;
   docInfo.metadata.rev_tree = merged.tree;
+  if (prev.rev_map) {
+    docInfo.metadata.rev_map = prev.rev_map; // used by leveldb
+  }
 
   // recalculate
   var winningRev = merge.winningRev(docInfo.metadata);
   deleted = exports.isDeleted(docInfo.metadata, winningRev);
 
-  write(docInfo, winningRev, deleted, cb, true, i);
+  var delta = 0;
+  if (newEdits || winningRev === newRev) {
+    // if newEdits==false and we're pushing existing revisions,
+    // then the only thing that matters is whether this revision
+    // is the winning one, and thus replaces an old one
+    delta = (previouslyDeleted === deleted) ? 0 :
+      previouslyDeleted < deleted ? -1 : 1;
+  }
+
+  writeDoc(docInfo, winningRev, deleted, cb, true, delta, i);
 };
 
 exports.processDocs = function processDocs(docInfos, api, fetchedDocs,
-                                           tx, results, writeDoc, opts) {
+                                           tx, results, writeDoc, opts,
+                                           overallCallback) {
 
   if (!docInfos.length) {
     return;
@@ -707,31 +609,45 @@ exports.processDocs = function processDocs(docInfos, api, fetchedDocs,
     var winningRev = merge.winningRev(docInfo.metadata);
     var deleted = exports.isDeleted(docInfo.metadata, winningRev);
     if ('was_delete' in opts && deleted) {
-      results[resultsIdx] = errors.MISSING_DOC;
+      results[resultsIdx] = errors.error(errors.MISSING_DOC, 'deleted');
       return callback();
     }
-    writeDoc(docInfo, winningRev, deleted, callback, false, resultsIdx);
+
+    var delta = deleted ? 0 : 1;
+
+    writeDoc(docInfo, winningRev, deleted, callback, false, delta, resultsIdx);
   }
 
   var newEdits = opts.new_edits;
   var idsToDocs = new exports.Map();
 
+  var docsDone = 0;
+  var docsToDo = docInfos.length;
+
+  function checkAllDocsDone() {
+    if (++docsDone === docsToDo && overallCallback) {
+      overallCallback();
+    }
+  }
+
   docInfos.forEach(function (currentDoc, resultsIdx) {
 
     if (currentDoc._id && exports.isLocalId(currentDoc._id)) {
       api[currentDoc._deleted ? '_removeLocal' : '_putLocal'](
-        currentDoc, {ctx: tx}, function (err, resp) {
+        currentDoc, {ctx: tx}, function (err) {
           if (err) {
             results[resultsIdx] = err;
           } else {
-            results[resultsIdx] = {};
+            results[resultsIdx] = {ok: true};
           }
+          checkAllDocsDone();
         });
       return;
     }
 
     var id = currentDoc.metadata.id;
     if (idsToDocs.has(id)) {
+      docsToDo--; // duplicate
       idsToDocs.get(id).push([currentDoc, resultsIdx]);
     } else {
       idsToDocs.set(id, [[currentDoc, resultsIdx]]);
@@ -746,6 +662,8 @@ exports.processDocs = function processDocs(docInfos, api, fetchedDocs,
     function docWritten() {
       if (++numDone < docs.length) {
         nextDoc();
+      } else {
+        checkAllDocsDone();
       }
     }
     function nextDoc() {
@@ -778,7 +696,7 @@ exports.preprocessAttachments = function preprocessAttachments(
       return exports.atob(data);
     } catch (e) {
       var err = errors.error(errors.BAD_ARG,
-        "Attachments need to be base64 encoded");
+                             'Attachments need to be base64 encoded');
       return {error: err};
     }
   }
@@ -809,15 +727,15 @@ exports.preprocessAttachments = function preprocessAttachments(
         callback();
       });
     } else { // input is a blob
-      exports.readAsBinaryString(att.data, function (binary) {
+      exports.readAsArrayBuffer(att.data, function (buff) {
         if (blobType === 'binary') {
-          att.data = binary;
+          att.data = exports.arrayBufferToBinaryString(buff);
         } else if (blobType === 'base64') {
-          att.data = exports.btoa(binary);
+          att.data = exports.btoa(exports.arrayBufferToBinaryString(buff));
         }
-        exports.MD5(binary).then(function (result) {
+        exports.MD5(buff).then(function (result) {
           att.digest = 'md5-' + result;
-          att.length = binary.length;
+          att.length = buff.byteLength;
           callback();
         });
       });
@@ -860,5 +778,37 @@ exports.preprocessAttachments = function preprocessAttachments(
         callback();
       }
     }
+  }
+};
+
+// compact a tree by marking its non-leafs as missing,
+// and return a list of revs to delete
+exports.compactTree = function compactTree(metadata) {
+  var revs = [];
+  merge.traverseRevTree(metadata.rev_tree, function (isLeaf, pos,
+                                                     revHash, ctx, opts) {
+    if (opts.status === 'available' && !isLeaf) {
+      revs.push(pos + '-' + revHash);
+      opts.status = 'missing';
+    }
+  });
+  return revs;
+};
+
+var vuvuzela = require('vuvuzela');
+
+exports.safeJsonParse = function safeJsonParse(str) {
+  try {
+    return JSON.parse(str);
+  } catch (e) {
+    return vuvuzela.parse(str);
+  }
+};
+
+exports.safeJsonStringify = function safeJsonStringify(json) {
+  try {
+    return JSON.stringify(json);
+  } catch (e) {
+    return vuvuzela.stringify(json);
   }
 };
