@@ -6,12 +6,24 @@
 -->
 <ion-view title="{{col.name}}">
     <ion-content has-header="true" padding="true">
-        <a ui-sref='tab.comics({catId:cat._id,colId:col._id})'
-                class="item item-avatar">
-            <img src="{{col.tipo}}">
-            <h2>{{col.name}}</h2>
-            <p>{{comic.numero}} de {{col.numeros}}</p>
-        </a>
+        <div class="card">
+            <div class="item item-thumbnail item-icon-right">
+                <a ui-sref='tab.cat-detail({catId:cat._id})'>
+                    <i class="icon ion-chevron-up"></i>
+                </a>
+                <div class="row">
+                    <div class="col-30">
+                        <img src="{{col.tipo}}">
+                    </div>
+                    <div class="col">
+                        <h2>{{col.name}}</h2>
+                        <p>{{comic.numero}} de {{col.numeros}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="item item-divider"></div>
+        </div>
+
         <div class="item item-image">
             <img style="width:80%" src="{{comic.tipo}}">
         </div>
