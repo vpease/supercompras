@@ -1,34 +1,35 @@
-<ion-view title="Comics Perú" nav-clear="true">
+<ion-view title="Ultimos comics publicados" nav-clear="true">
   <div style="height: 50px"></div>
   <ion-content header-shrink>
-    <h2 align="center" class="title">Ultimos comics publicados</h2>
     <div class="list card">
       <div ng-repeat="comic in comics"
               class="card">
         <div class="item item-avatar">
-          <img src= '{{  comic.doc.tipo }}'><h2>{{comic.doc.name}}</h2>
-          <p>Publicación: {{comic.key[0]}}</p>
+            <img src= '{{comic.doc.tipo }}'>
+            <h2>{{comic.doc.name}}</h2>
+            <p>Publicación: {{comic.key[0]}}</p>
         </div>
-        <div class="item item-body">
-          <div class="row">
-            <div class="col">
-              <a ui-sref="tab.comics({catId:comic.doc.cats[0].cat,colId:comic.doc._id})">
-                <img class="full-image" width=""src='{{ comic.key[5] }}'>
-              </a>
-            </div>
-            <div class="col">
-              <p><b>Desc:</b> {{comic.key[1]}}</p>
-              <p><b>Notas:</b> {{comic.key[2]}}</p>
-              <p><b>Número:</b> {{comic.key[3]}} de {{comic.doc.numeros}}</p>
-              <p><b>Precio:</b> {{comic.key[4]}} soles</p>
-            </div>
-          </div>
+          <a class="item item-image item-icon-right"
+             ui-sref="tab.comic({catId:comic.doc.cats[0].cat,colId:comic.doc._id,comicId:comic.id})">
+              <i class="icon ion-chevron-right"></i>
+              <div class="row">
+                  <div class="col-20">
+                      <img class="full-image" width=""src='{{ comic.key[5] }}'>
+                  </div>
+                  <div class="col" align="left">
+                      <p><b>Desc:</b> {{comic.key[1]}}</p>
+                      <p><b>Notas:</b> {{comic.key[2]}}</p>
+                      <p><b>Número:</b> {{comic.key[3]}} de {{comic.doc.numeros}}</p>
+                      <p><b>Precio:</b> {{comic.key[4]}} soles</p>
+                  </div>
+              </div>
+          </a>
           <!--
           <div class="row">
             <p><a href="#" class="subdued">1 like</a><a href="#" class="subdued">5 comentarios</a></p>
           </div>
           -->
-        </div>
+
         <!--
         <div class="item tabs tabs-secondary tabs-icon-left">
           <a class="tab-item" href="#"><i class="icon ion-thumbsup"></i>Me gusta</a>
