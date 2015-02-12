@@ -20,7 +20,8 @@ angular.module('comics', ['ionic', 'controllers', 'services','ngCordova'])
                     console.log('Se ha recuperado la plataforma:' + result);
                     var options = {
                         publisherID: result.banner,
-                        bannerAtTop: false, // Set to true, to put banner at top
+                        adSize: 'SMART_BANNER',
+                        bannerAtTop: true, // Set to true, to put banner at top
                         overlap: false, // True to allow banner overlap webview
                         offsetTopBar: true, // True to avoid ios7 status bar overlap
                         isTesting: true, // receiving test to

@@ -8,14 +8,14 @@
     <ion-content has-header="true" padding="true">
         <div class="card">
             <div class="item item-thumbnail item-icon-right">
-                <a ui-sref='tab.cat-detail({catId:cat._id})'>
+                <a ui-sref='tab.comics({catId:cat._id,colId:col._id})'>
                     <i class="icon ion-chevron-up"></i>
                 </a>
                 <div class="row">
                     <div class="col-20">
                         <img src="{{col.tipo}}">
                     </div>
-                    <div class="col">
+                    <div class="col" align="center">
                         <h2>{{col.name}}</h2>
                         <p>{{col.tags}}</p>
                     </div>
@@ -27,7 +27,7 @@
             <div class="item-divider">
                 <p><b>Número:</b> {{comic.numero}} de {{col.numeros}}</p>
             </div>
-            <div class="item item-thumbnail">
+            <!-- <div class="item item-thumbnail">
                 <div class="row">
                     <div class="col-40">
                         <img src="{{comic.tipo}}">
@@ -38,6 +38,21 @@
                         <p><b>Publicado:</b> {{comic.published}}</p>
                         <p><b>Barcode:</b> {{comic.ean}}</p>
                         <p><b>Precio:</b> {{comic.precio}} soles</p>
+                    </div>
+                </div>
+            </div> -->
+            <div class="item item-body">
+                <div class="row responsive-sm">
+                    <div>
+                        <img  src="{{comic.tipo}}">
+                    </div>
+                    <div align="left">
+                            <b>Desc:</b> {{comic.descripcion}}</br>
+                            <b>Notas:</b> {{comic.notas}}</br>
+                            <b>Tags:</b> {{comic.tags}}</br>
+                            <b>Publicado:</b> {{comic.published}}</br>
+                            <b>Barcode:</b> {{comic.ean}}</br>
+                            <b>Precio:</b> {{comic.precio}} soles</br>
                     </div>
                 </div>
             </div>

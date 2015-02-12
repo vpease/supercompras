@@ -36,22 +36,7 @@ angular.module('db',[])
         self.initial = function(){
             initial = window.localStorage['initial']||'false';
             if (initial){
-                var dumpFiles = [
-                    'data_00000000.txt',
-                    'data_00000001.txt',
-                    'data_00000002.txt',
-                    'data_00000003.txt',
-                    'data_00000004.txt',
-                    'data_00000005.txt',
-                    'data_00000006.txt',
-                    'data_00000007.txt',
-                    'data_00000008.txt',
-                    'data_00000009.txt',
-                    'data_00000010.txt',
-                    'data_00000011.txt',
-                    'data_00000012.txt',
-                    'data_00000013.txt'
-                ];
+                var dumpFiles = ['data.txt'];
                 window.PouchDB.utils.Promise.all(dumpFiles.map(function (dumpFile) {
                     return self.db.load('data/' + dumpFile);
                 })).then(function () {
@@ -67,13 +52,15 @@ angular.module('db',[])
         };
         self.replicate = function(){
             var sync = self.db.replicate.from(
-                'http://supermio.iriscouch.com:5984/supercomics',
+                'https://supermio.iriscouch.com:6984/supercomics',
                 {live:true, retry:true})
+                .on('paused',function(info){
+                    console.log('Estoy en el estado paused');
+                })
                 .on('change',function(info){
                     console.log('Cambios en la base de datos'+info);
                 }).on('complete',function(info){
                     console.log('Sync data complete'+info);
-
                 }).on('uptodate',function(info){
                     console.log('Actualizado datos'+info);
                     $rootScope.$broadcast('db:uptodate');

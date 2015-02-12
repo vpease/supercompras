@@ -16,6 +16,7 @@
   },
   "cordovaPlugins": [
     "org.apache.cordova.dialogs",
-    "https://github.com/wildabeast/BarcodeScanner.git"
+    "https://github.com/wildabeast/BarcodeScanner.git",
+    "https://github.com/danwilson/google-analytics-plugin.git"
   ]
 }

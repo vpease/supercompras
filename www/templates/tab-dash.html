@@ -1,5 +1,4 @@
-<ion-view title="Ultimos comics publicados" nav-clear="true">
-  <div style="height: 50px"></div>
+<ion-view title="Ultimos publicados" nav-clear="true">
   <ion-content header-shrink>
     <div class="list card">
       <div ng-repeat="comic in comics"
@@ -18,7 +17,6 @@
                   </div>
                   <div class="col" align="left">
                       <p><b>Desc:</b> {{comic.key[1]}}</p>
-                      <p><b>Notas:</b> {{comic.key[2]}}</p>
                       <p><b>Número:</b> {{comic.key[3]}} de {{comic.doc.numeros}}</p>
                       <p><b>Precio:</b> {{comic.key[4]}} soles</p>
                   </div>
