@@ -6,8 +6,8 @@
 -->
 <ion-view title="{{col.name}}">
     <ion-content has-header="true" padding="true">
-        <div class="card">
-            <div class="item item-thumbnail item-icon-right">
+        <!-- <div class="card">
+            <div class="item item-avatar item-icon-right">
                 <a ui-sref='tab.comics({catId:cat._id,colId:col._id})'>
                     <i class="icon ion-chevron-up"></i>
                 </a>
@@ -22,9 +22,18 @@
                 </div>
             </div>
             <div class="item item-divider"></div>
-        </div>
-        <div class="card">
-            <div class="item-divider">
+        </div> -->
+        <div class="list card">
+            <div class="card">
+            <div class="item item-avatar item-icon-right">
+                <img src="{{col.tipo}}">
+                <h2>{{col.name}}</h2>
+                <p>{{col.tags}}</p>
+                <a ui-sref='tab.comics({catId:cat._id,colId:col._id})'>
+                    <i class="icon ion-chevron-up"></i>
+                </a>
+            </div>
+            <div class="item item-divider">
                 <p><b>Número:</b> {{comic.numero}} de {{col.numeros}}</p>
             </div>
             <!-- <div class="item item-thumbnail">
@@ -56,7 +65,8 @@
                     </div>
                 </div>
             </div>
-            <div class="item-divider"></div>
+            <div class="item item-divider"></div>
+        </div>
         </div>
     </ion-content>
 </ion-view>
