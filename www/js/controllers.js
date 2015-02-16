@@ -1,5 +1,5 @@
 angular.module('controllers', ['ngCordova'])
-    .controller('LoginCtrl',function($scope,$cordovaAdMob,Cats,Ads){
+    .controller('LoginCtrl',function($scope,Cats,Ads){
         //Cats.data();
 
     })
@@ -60,6 +60,7 @@ angular.module('controllers', ['ngCordova'])
         $scope.cat= cat;
         $scope.col = col;
         $scope.comics = comics.rows;
+        $scope.sortToken = 'doc.published';
         $scope.getItemHeight = function(item,index){
             return (index %2)=== 0 ? 50:60;
         };
@@ -114,7 +115,7 @@ angular.module('controllers', ['ngCordova'])
     .controller('BuscarCtrl',function($scope,$state,$cordovaBarcodeScanner){
         $scope.getBarcode = function(){
             $cordovaBarcodeScanner.scan().then(function(barcodeData){
-                //alert (barcodeData.text)
+                alert (barcodeData.text)
                 $state.go('tab.buscar.result',{barcode:barcodeData.text});
             },function(error){
                 //alert ('Error:'+error);

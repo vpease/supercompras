@@ -4,19 +4,16 @@
   The FriendsCtrl pulls data from the Friends service (service.js)
   The Friends service returns an array of friend data
 -->
-<ion-view title="{{col.name}}">
+<ion-view title="Colección Completa">
   <ion-content has-header="true" padding="true">
     <div class="card">
-        <div class="item item-avatar">
-            <img style="width:auto;height:auto" src={{cat.avatar}}>
-            <h2>{{cat.name}}</h2>
-        </div>
         <div class="item item-thumbnail item-icon-right">
             <a ui-sref='tab.cat-detail({catId:cat._id})'>
                 <i class="icon ion-chevron-up"></i>
             </a>
             <div class="row">
                 <div class="col-30">
+                    <img style="width:auto;height:auto" src={{cat.avatar}}>
                     <img style="width:auto;height:auto" src={{col.tipo}}>
                 </div>
                 <div class="col">
@@ -26,11 +23,27 @@
                 </div>
             </div>
         </div>
-        <div class="item item-divider"></div>
+        <div class="item item-divider">
+            <label class="item item-input">
+                <input type="text" ng-model="token" placeholder="Buscar"/>
+            </label>
+            <div>
+                <label class="item item-input item-select">
+                    <div class="input-label">
+                        Ordernar
+                    </div>
+                    <select ng-model="sortToken">
+                        <option value="doc.published">Antiguos</option>
+                        <option value="-doc.published">Nuevos</option>
+                        <option value="doc.notas">Notas</option>
+                    </select>
+                </label>
+            </div>
+        </div>
     </div>
-    <div class="list list-inset">
+    <div class="list card">
         <a class="item item-image item-icon-right"
-           ng-repeat="comic in comics"
+           ng-repeat="comic in comics | filter:token | orderBy:sortToken"
            ui-sref='tab.comic({catId:cat._id,colId:col._id,comicId:comic.id})'>
             <i class="icon ion-chevron-right"></i>
             <div class="row">

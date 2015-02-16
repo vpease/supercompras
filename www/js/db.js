@@ -16,10 +16,12 @@ angular.module('db',[])
 
                 self.db = new window.PouchDB('supercomics',{
                     adapter: 'websql',
-                    size:2000,
                     auto_compaction:true});
                 if (!self.db.adapter){
                     self.db  = new PouchDB('supercomics');
+                    console.log('Usando IndexedDB');
+                } else {
+                    console.log('Usando websql');
                 }
 
                 self.initial();
@@ -34,19 +36,23 @@ angular.module('db',[])
             }
         };
         self.initial = function(){
-            initial = window.localStorage['initial']||'false';
+            console.log('Entrando a la carga inicial');
+            initial = localStorage['initial']||'false';
             if (initial){
+                console.log('Entrando a la carga de data.txt');
                 var dumpFiles = ['data.txt'];
-                window.PouchDB.utils.Promise.all(dumpFiles.map(function (dumpFile) {
+                PouchDB.utils.Promise.all(dumpFiles.map(function (dumpFile) {
+                    console.log('A punto de iniciar la carga de data.txt');
                     return self.db.load('data/' + dumpFile);
                 })).then(function () {
                     console.log('Carga correcta');
-                    window.localStorage['initial']='true';
+                    localStorage['initial']='true';
                     $rootScope.$broadcast('dbinit:uptodate');
                 }).catch(function (err) {
                     console.log('Error en la carga')
                 });
             } else {
+                console.log('Carga inicial completada');
                 $rootScope.$broadcast('dbinit:uptodate');
             }
         };

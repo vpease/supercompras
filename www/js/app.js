@@ -1,5 +1,5 @@
-angular.module('comics', ['ionic', 'controllers', 'services','ngCordova'])
-    .run(function($ionicPlatform,$cordovaAdMob,Ads,Cats) {
+angular.module('comics', ['ionic', 'controllers', 'services'])
+    .run(function($ionicPlatform,Ads,Cats) {
         $ionicPlatform.ready(function() {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)
