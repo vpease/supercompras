@@ -16,6 +16,7 @@ angular.module('db',[])
 
                 self.db = new window.PouchDB('supercomics',{
                     adapter: 'websql',
+                    size: 50,
                     auto_compaction:true});
                 if (!self.db.adapter){
                     self.db  = new PouchDB('supercomics');

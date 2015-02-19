@@ -116,9 +116,9 @@ angular.module('comics', ['ionic', 'controllers', 'services'])
                 return res;
               }
             },
-            onEnter: function($ionicViewService){
+            onEnter: function($ionicHistory){
                 console.log('Estoy en el estado tab.dash');
-                $ionicViewService.clearHistory();
+                $ionicHistory.clearHistory();
             },
             onExit: function(){
               console.log('Saliendo del estado tab.dash')
